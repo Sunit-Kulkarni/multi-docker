@@ -1,0 +1,29 @@
+# sudo permissions needed
+sudo: required
+
+# docker is a needed dependency
+services:
+  - docker
+
+# build test version of React project
+before_install:
+  - docker build -t sunitkulkarni/react-test -f ./client/Dockerfile.dev ./client
+
+# run tests
+script:
+  - docker run -e CI=true sunitkulkarni/react-test npm test -- --coverage
+
+# build production versions of all projects
+after_success:
+  - docker build -t sunitkulkarni/multi-client ./client
+  - docker build -t sunitkulkarni/multi-nginx ./nginx
+  - docker build -t sunitkulkarni/multi-server ./server
+  - docker build -t sunitkulkarni/multi-worker ./worker
+  # login to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # push all to docker hub
+  - docker push sunitkulkarni/mulit-client
+  - docker push sunitkulkarni/multi-nginx
+  - docker push sunitkulkarni/multi-server
+  - docker push sunitkulkarni/mulit-worker
+  # tell AWS elastic bean stalk to update
