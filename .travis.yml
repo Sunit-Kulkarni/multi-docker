@@ -22,8 +22,8 @@ after_success:
   # login to docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # push all to docker hub
-  - docker push sunitkulkarni/mulit-client
+  - docker push sunitkulkarni/multi-client
   - docker push sunitkulkarni/multi-nginx
   - docker push sunitkulkarni/multi-server
-  - docker push sunitkulkarni/mulit-worker
+  - docker push sunitkulkarni/multi-worker
   # tell AWS elastic bean stalk to update
